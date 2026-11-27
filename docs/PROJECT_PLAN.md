@@ -30,7 +30,7 @@ Establish a shared domain foundation for Digital India Project: canonical schema
 
 ## 4. Current baseline
 
-The repository contains only a minimal README; no package manifest, source tree or tests were verified. Initial domain candidates are inferred from the existing DIPINDIA source inspection and must be confirmed through a complete inventory.
+`dip-core` includes the core TypeScript library (`src/core/`), ESM + `.d.ts` build configuration (`tsconfig.lib.json`), automated dependency boundary verification (`scripts/check-boundaries.mjs`), Node.js unit and contract tests (`tests/`), and an interactive contract workbench (`src/App.tsx`). Provisional compatibility adapters exist in `src/core/compatibility/dipindiaAdapters.ts`, while direct `DIPINDIA` source inspection and characterization parity remain pending because `DIPINDIA` is not accessible in this workspace.
 
 ## 5. Workstreams
 

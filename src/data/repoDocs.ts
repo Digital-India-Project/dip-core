@@ -1,9 +1,14 @@
 import readmeRaw from '../../README.md?raw';
 import projectPlanRaw from '../../docs/PROJECT_PLAN.md?raw';
 import architectureRaw from '../../docs/ARCHITECTURE.md?raw';
+import domainModelRaw from '../../docs/DOMAIN_MODEL.md?raw';
+import contractsRaw from '../../docs/CONTRACTS.md?raw';
+import compatibilityRaw from '../../docs/COMPATIBILITY.md?raw';
 import roadmapRaw from '../../docs/ROADMAP.md?raw';
 import integrationRaw from '../../docs/INTEGRATION.md?raw';
 import securityRaw from '../../docs/SECURITY.md?raw';
+import testingRaw from '../../docs/TESTING.md?raw';
+import versioningRaw from '../../docs/VERSIONING.md?raw';
 
 export interface RepoDocEntry {
   readonly id: string;
@@ -18,15 +23,36 @@ export const REPO_DOCS: readonly RepoDocEntry[] = [
     id: 'readme',
     filename: 'README.md',
     title: 'Mission & Design Rules',
-    summary: 'Repository baseline, DIPINDIA-first rule, target layout, and 8 core design rules.',
+    summary: 'Repository baseline, DIPINDIA-first rule, package layout, and 8 core design rules.',
     content: readmeRaw,
   },
   {
     id: 'architecture',
     filename: 'docs/ARCHITECTURE.md',
     title: 'Architecture & Boundaries',
-    summary: 'Dependency direction, proposed modules, money/time/state rules, and provider boundaries.',
+    summary: 'Dependency direction, domain modules, money/time/state rules, and provider boundaries.',
     content: architectureRaw,
+  },
+  {
+    id: 'domain-model',
+    filename: 'docs/DOMAIN_MODEL.md',
+    title: 'Domain Model & Invariants',
+    summary: 'Implemented modules, aggregates, value objects, state machines, and deliberate omissions.',
+    content: domainModelRaw,
+  },
+  {
+    id: 'contracts',
+    filename: 'docs/CONTRACTS.md',
+    title: 'Public Contracts & API',
+    summary: 'Exported primitives, error codes, domain validators, and entry-point policy.',
+    content: contractsRaw,
+  },
+  {
+    id: 'compatibility',
+    filename: 'docs/COMPATIBILITY.md',
+    title: 'DIPINDIA Compatibility & Readiness',
+    summary: 'Domain inventory, readiness classification, provisional adapters, and rollback plan.',
+    content: compatibilityRaw,
   },
   {
     id: 'project-plan',
@@ -55,6 +81,20 @@ export const REPO_DOCS: readonly RepoDocEntry[] = [
     title: 'Security Requirements',
     summary: 'Input trust, sensitive data handling, authorization boundaries, and financial correctness.',
     content: securityRaw,
+  },
+  {
+    id: 'testing',
+    filename: 'docs/TESTING.md',
+    title: 'Testing & Quality Engineering',
+    summary: 'Node.js unit/contract tests, boundary enforcement scripts, and verification commands.',
+    content: testingRaw,
+  },
+  {
+    id: 'versioning',
+    filename: 'docs/VERSIONING.md',
+    title: 'Versioning & Changelog',
+    summary: 'Semantic versioning policy, schema compatibility rules, and contract changelog.',
+    content: versioningRaw,
   },
 ];
 

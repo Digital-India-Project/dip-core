@@ -1,18 +1,20 @@
 # DIP Core
 
 **Role:** Shared domain contracts, schemas and deterministic business logic  
-**Status:** Planning foundation; no implementation package verified  
+**Status:** Core domain library & interactive workbench implemented (`v0.2.0`); DIPINDIA parity audit pending  
 **Primary consumer:** Existing DIPINDIA application
 
 ## Mission
 
-DIP Core will provide stable, framework-independent domain types, validation schemas, business rules and shared result/error contracts for the Digital India Project ecosystem.
+DIP Core provides stable, framework-independent domain types, validation schemas, business rules, and shared result/error contracts for the Digital India Project ecosystem.
 
-DIPINDIA is the existing developed platform and remains the continuity anchor. This repository must help extract duplicated or reusable domain logic gradually. It must not become a second application, a second database, or a competing business platform.
+DIPINDIA is the existing developed platform and remains the continuity anchor. This repository extracts reusable domain logic gradually behind compatibility adapters. It must not become a second application, a second database, or a competing business platform.
 
 ## Current baseline
 
-The repository currently contains only a minimal README. No package, source tree, build configuration or tests have been verified. The documents define the intended design, not existing implementation.
+- **Implemented (`src/core/`):** Pure TypeScript domain modules (`errors`, `common`, `identity`, `events`, `services`, `forms`, `documents`, `applications`, `payments`, `partners`, `compatibility`, `fixtures`), ESM + `.d.ts` library build (`dist-lib/`), automated dependency boundary verification (`scripts/check-boundaries.mjs`), Node.js unit and contract tests (`tests/`), and an interactive React/Vite workbench (`src/App.tsx`).
+- **Provisional:** `src/core/compatibility/dipindiaAdapters.ts` provides anti-corruption adapter examples awaiting source-level characterization against `DIPINDIA`.
+- **Blocked / Pending:** Read-only source inspection of `DIPINDIA` (not accessible from this workspace) and production adoption approval.
 
 ## Responsibilities
 
@@ -21,59 +23,74 @@ The repository currently contains only a minimal README. No package, source tree
 - Application and workflow state contracts.
 - Service catalogue and pricing contracts.
 - Form and document requirement schemas.
-- Payment status and order domain contracts (not payment gateway execution).
-- Stable errors, results, identifiers and pagination contracts.
+- Payment status, order, refund, and reconciliation domain contracts (not payment gateway execution).
+- Versioned event envelopes, audit metadata, and notification request contracts.
+- Stable errors, results, identifiers, and pagination/filter contracts.
 - Contract versioning and compatibility tests.
 
 ## Out of scope
 
-- UI components and rendering.
+- UI components and rendering for end-user portals (belongs in `DIPINDIA` / `dip-ui`).
 - Direct database access or ownership of production data.
-- Authentication provider implementation or authorization enforcement.
-- Payment credentials, provider network clients and webhook runtime.
-- Background job execution.
-- Infrastructure provisioning or deployment.
+- Authentication provider implementation or authorization enforcement (belongs in `dip-security` / `DIPINDIA`).
+- Payment credentials, provider network clients, and webhook runtime.
+- Background job execution (belongs in `dip-automation`).
+- Infrastructure provisioning or deployment (belongs in `dip-infrastructure`).
 - Copying or migrating DIPINDIA data.
 
 ## DIPINDIA-first rule
 
-All extraction begins with a source audit and characterization tests in DIPINDIA. New domain modules must be introduced behind adapters. Existing service names, forms, application states, pricing, payment calculations and customer-facing behaviour remain unchanged until parity is demonstrated and cutover is separately approved.
+All extraction requires a source audit and characterization tests in DIPINDIA. New domain modules are introduced behind compatibility adapters (`src/core/compatibility/dipindiaAdapters.ts`). Existing service names, forms, application states, pricing, payment calculations, and customer-facing behaviour remain authoritative in DIPINDIA until parity is demonstrated and cutover is separately approved.
 
-## Target structure
+## Repository layout
 
 ```text
 .
 ├── README.md
 ├── package.json
 ├── tsconfig.json
+├── tsconfig.lib.json
+├── tsconfig.test.json
+├── scripts/
+│   └── check-boundaries.mjs
 ├── src/
-│   ├── common/
-│   ├── identity/
-│   ├── services/
-│   ├── forms/
-│   ├── applications/
-│   ├── payments/
-│   ├── documents/
-│   ├── partners/
-│   └── errors/
-├── schemas/
+│   ├── core/
+│   │   ├── errors/
+│   │   ├── common/
+│   │   ├── identity/
+│   │   ├── events/
+│   │   ├── services/
+│   │   ├── forms/
+│   │   ├── documents/
+│   │   ├── applications/
+│   │   ├── payments/
+│   │   ├── partners/
+│   │   ├── compatibility/
+│   │   ├── contracts/
+│   │   ├── fixtures/
+│   │   └── index.ts
+│   └── ... (interactive workbench SPA)
 ├── tests/
 │   ├── unit/
 │   └── contract/
 └── docs/
     ├── PROJECT_PLAN.md
     ├── ARCHITECTURE.md
+    ├── DOMAIN_MODEL.md
+    ├── CONTRACTS.md
+    ├── COMPATIBILITY.md
+    ├── INTEGRATION.md
     ├── ROADMAP.md
     ├── SECURITY.md
-    └── INTEGRATION.md
+    ├── TESTING.md
+    ├── VERSIONING.md
+    └── adr/
 ```
-
-Target layout only. Choose package tooling after reviewing ecosystem constraints; do not introduce a monorepo/workspace assumption prematurely.
 
 ## Design rules
 
 1. Keep core modules deterministic and side-effect free wherever possible.
-2. No React, Express, Hono, Firebase, Cloudflare or provider-specific imports in pure domain packages.
+2. No React, Express, Hono, Firebase, Cloudflare, or provider-specific imports in `src/core/`.
 3. Use explicit schemas and runtime validation at trust boundaries.
 4. Model money in integer minor units (for INR, paise) and avoid floating-point arithmetic.
 5. Define state transitions explicitly; reject invalid transitions.
@@ -81,14 +98,25 @@ Target layout only. Choose package tooling after reviewing ecosystem constraints
 7. Keep domain logic separate from persistence and transport.
 8. Use synthetic fixtures only.
 
+## Verification
+
+```bash
+npm run check   # lint + boundary check + node --test + library build + workbench build
+```
+
 ## Documents
 
 - [Project plan](docs/PROJECT_PLAN.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Domain model](docs/DOMAIN_MODEL.md)
+- [Contracts reference](docs/CONTRACTS.md)
+- [DIPINDIA compatibility](docs/COMPATIBILITY.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Security](docs/SECURITY.md)
+- [Testing](docs/TESTING.md)
+- [Versioning](docs/VERSIONING.md)
 - [Integration](docs/INTEGRATION.md)
 
 ## Governance
 
-Review branches only. Never push to main, merge, deploy, migrate production data or change DIPINDIA behaviour without explicit approval.
+Review branches only (`development/*`). Never push to main, merge, deploy, migrate production data, or change DIPINDIA behaviour without explicit approval.

@@ -1,4 +1,4 @@
-import { ServiceId } from '../common/identifiers';
+import { ProductId, ServiceId } from '../common/identifiers.js';
 import {
   addMoney,
   createMoney,
@@ -6,9 +6,9 @@ import {
   multiplyBasisPoints,
   RoundingMode,
   subtractMoney,
-} from '../common/money';
-import { err, ok, Result } from '../common/result';
-import { createDomainError, DomainError, ErrorCode } from '../errors/domainError';
+} from '../common/money.js';
+import { err, ok, Result } from '../common/result.js';
+import { createDomainError, DomainError, ErrorCode } from '../errors/domainError.js';
 
 export type ServiceCategory =
   | 'IDENTITY'
@@ -24,6 +24,13 @@ export interface LocalizedLabel {
   readonly hi: string;
 }
 
+export interface PriceComponent {
+  readonly code: 'STATUTORY_FEE' | 'FACILITATION_FEE' | 'CONCESSION_DISCOUNT' | 'GST';
+  readonly label: string;
+  readonly amount: Money;
+  readonly taxable: boolean;
+}
+
 export interface ServiceDefinition {
   readonly id: ServiceId;
   readonly code: string;
@@ -35,6 +42,16 @@ export interface ServiceDefinition {
   readonly facilitationFeePaise: number;
   readonly gstBasisPoints: number; // e.g., 1800 = 18% GST on facilitation fee only
   readonly estimatedTurnaroundDays: number;
+  readonly contractVersion: string;
+}
+
+export interface ProductDefinition {
+  readonly id: ProductId;
+  readonly serviceId: ServiceId;
+  readonly skuCode: string;
+  readonly title: LocalizedLabel;
+  readonly availability: ServiceAvailability;
+  readonly includesPhysicalDispatch: boolean;
   readonly contractVersion: string;
 }
 
@@ -68,9 +85,57 @@ export interface PricingQuoteBreakdown {
   readonly calculationSteps: readonly string[];
 }
 
+export function validateServiceDefinition(
+  service: ServiceDefinition
+): Result<ServiceDefinition, DomainError> {
+  if (!/^[A-Z0-9-]{3,40}$/.test(service.code)) {
+    return err(
+      createDomainError(
+        ErrorCode.SCHEMA_VALIDATION_FAILED,
+        'Service code must be 3-40 uppercase alphanumeric or hyphen characters.',
+        'code'
+      )
+    );
+  }
+  const statutory = createMoney(service.statutoryFeePaise, 'INR', 'statutoryFeePaise');
+  if (!statutory.ok) return statutory;
+
+  const facilitation = createMoney(service.facilitationFeePaise, 'INR', 'facilitationFeePaise');
+  if (!facilitation.ok) return facilitation;
+
+  if (
+    !Number.isInteger(service.gstBasisPoints) ||
+    service.gstBasisPoints < 0 ||
+    service.gstBasisPoints > 2800
+  ) {
+    return err(
+      createDomainError(
+        ErrorCode.INVALID_MONEY_AMOUNT,
+        'gstBasisPoints must be an integer between 0 and 2800.',
+        'gstBasisPoints'
+      )
+    );
+  }
+
+  if (!Number.isInteger(service.estimatedTurnaroundDays) || service.estimatedTurnaroundDays < 1) {
+    return err(
+      createDomainError(
+        ErrorCode.SCHEMA_VALIDATION_FAILED,
+        'estimatedTurnaroundDays must be a positive integer.',
+        'estimatedTurnaroundDays'
+      )
+    );
+  }
+
+  return ok(service);
+}
+
 export function calculateServiceQuote(
   input: PricingQuoteInput
 ): Result<PricingQuoteBreakdown, DomainError> {
+  const validService = validateServiceDefinition(input.service);
+  if (!validService.ok) return validService;
+
   if (input.service.availability !== 'ACTIVE') {
     return err(
       createDomainError(

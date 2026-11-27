@@ -1,19 +1,22 @@
-import { ApplicationContract } from '../applications/applicationLifecycle';
+import { ApplicationContract } from '../applications/applicationLifecycle.js';
 import {
   ApplicationId,
+  BusinessId,
+  CustomerId,
   DocumentId,
   OrderId,
   PartnerId,
   PaymentId,
   ServiceId,
+  TenantId,
   UserId,
-} from '../common/identifiers';
-import { UtcInstant } from '../common/time';
-import { DocumentRecord, DocumentRequirement } from '../documents/documentRequirements';
-import { FormSchemaContract } from '../forms/formSchema';
-import { PartnerContract } from '../partners/partnerContract';
-import { PaymentOrderContract } from '../payments/paymentLifecycle';
-import { ServiceDefinition } from '../services/catalogueAndPricing';
+} from '../common/identifiers.js';
+import { UtcInstant } from '../common/time.js';
+import { DocumentRecord, DocumentRequirement } from '../documents/documentRequirements.js';
+import { FormSchemaContract } from '../forms/formSchema.js';
+import { PartnerContract } from '../partners/partnerContract.js';
+import { PaymentOrderContract } from '../payments/paymentLifecycle.js';
+import { ServiceDefinition } from '../services/catalogueAndPricing.js';
 
 const SYNTH_TS = '2026-11-27T09:00:00.000Z' as UtcInstant;
 
@@ -245,3 +248,30 @@ export const SYNTHETIC_FORM_SCHEMA: FormSchemaContract = {
     },
   ],
 };
+
+export const SYNTHETIC_TENANT_CONTEXT = {
+  tenantId: 'ten_synth_dl_01' as TenantId,
+  organizationCode: 'DIP-SYNTH-DL',
+  stateCode: 'DL',
+} as const;
+
+export const SYNTHETIC_CUSTOMER_REF = {
+  id: 'cus_synth_001' as CustomerId,
+  userId: 'usr_synth_001' as UserId,
+  tenantId: 'ten_synth_dl_01' as TenantId,
+  preferredLocale: 'en' as const,
+  stateCode: 'DL',
+  kycState: 'PARTIAL' as const,
+  createdAt: SYNTH_TS,
+};
+
+export const SYNTHETIC_BUSINESS_REF = {
+  id: 'biz_synth_001' as BusinessId,
+  customerId: 'cus_synth_001' as CustomerId,
+  legalName: 'Synthetic Micro Traders LLP',
+  entityType: 'LLP' as const,
+  stateCode: 'DL',
+  gstinRegistered: true,
+  udyamRegistered: true,
+};
+

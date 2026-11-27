@@ -1,14 +1,30 @@
 {
   "name": "@dip/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
+  "sideEffects": false,
+  "main": "./dist-lib/index.js",
+  "types": "./dist-lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist-lib/index.d.ts",
+      "import": "./dist-lib/index.js"
+    }
+  },
+  "files": [
+    "dist-lib"
+  ],
   "description": "Shared domain contracts, schemas, and deterministic business logic for the Digital India Project ecosystem",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "vite build",
+    "build:lib": "tsc -p tsconfig.lib.json",
     "preview": "vite preview --host 0.0.0.0 --port 3000",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/unit/*.test.js .test-dist/tests/contract/*.test.js",
+    "check": "npm run lint && npm run check:boundaries && npm test && npm run build:lib && npm run build"
   },
   "dependencies": {
     "lucide-react": "^0.475.0",
@@ -17,6 +33,7 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.9",
+    "@types/node": "^26.6.11",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",

@@ -1,5 +1,5 @@
-import { createDomainError, DomainError, ErrorCode } from '../errors/domainError';
-import { err, ok, Result } from './result';
+import { createDomainError, DomainError, ErrorCode } from '../errors/domainError.js';
+import { err, ok, Result } from './result.js';
 
 export type CurrencyCode = 'INR';
 
@@ -21,6 +21,15 @@ export function createMoney(
   currency: CurrencyCode = 'INR',
   fieldPath = 'amount'
 ): Result<Money, DomainError> {
+  if (currency !== 'INR') {
+    return err(
+      createDomainError(
+        ErrorCode.CURRENCY_MISMATCH,
+        `Unsupported currency "${String(currency)}". Only INR minor units are currently supported.`,
+        fieldPath
+      )
+    );
+  }
   if (typeof minorUnits !== 'number' || !Number.isInteger(minorUnits)) {
     return err(
       createDomainError(
@@ -43,7 +52,16 @@ export function createMoney(
   return ok({ minorUnits, currency });
 }
 
+function validateMoneyOperand(amount: Money, fieldPath: string): Result<Money, DomainError> {
+  return createMoney(amount.minorUnits, amount.currency, fieldPath);
+}
+
 export function addMoney(a: Money, b: Money): Result<Money, DomainError> {
+  const validA = validateMoneyOperand(a, 'a');
+  if (!validA.ok) return validA;
+  const validB = validateMoneyOperand(b, 'b');
+  if (!validB.ok) return validB;
+
   if (a.currency !== b.currency) {
     return err(
       createDomainError(
@@ -56,6 +74,11 @@ export function addMoney(a: Money, b: Money): Result<Money, DomainError> {
 }
 
 export function subtractMoney(a: Money, b: Money): Result<Money, DomainError> {
+  const validA = validateMoneyOperand(a, 'a');
+  if (!validA.ok) return validA;
+  const validB = validateMoneyOperand(b, 'b');
+  if (!validB.ok) return validB;
+
   if (a.currency !== b.currency) {
     return err(
       createDomainError(
@@ -67,6 +90,23 @@ export function subtractMoney(a: Money, b: Money): Result<Money, DomainError> {
   return createMoney(a.minorUnits - b.minorUnits, a.currency);
 }
 
+export function sumMoney(
+  items: readonly Money[],
+  currency: CurrencyCode = 'INR'
+): Result<Money, DomainError> {
+  let acc = createMoney(0, currency);
+  if (!acc.ok) return acc;
+  for (const item of items) {
+    acc = addMoney(acc.value, item);
+    if (!acc.ok) return acc;
+  }
+  return acc;
+}
+
+export function equalsMoney(a: Money, b: Money): boolean {
+  return a.currency === b.currency && a.minorUnits === b.minorUnits;
+}
+
 /**
  * Pure integer basis-point multiplication (100 bps = 1%, 10000 bps = 100%).
  * Avoids binary floating-point arithmetic entirely.
@@ -76,6 +116,9 @@ export function multiplyBasisPoints(
   basisPoints: number,
   rounding: RoundingMode = RoundingMode.HALF_UP
 ): Result<Money, DomainError> {
+  const validAmount = validateMoneyOperand(amount, 'amount');
+  if (!validAmount.ok) return validAmount;
+
   if (!Number.isInteger(basisPoints) || basisPoints < 0 || basisPoints > 100_000) {
     return err(
       createDomainError(
