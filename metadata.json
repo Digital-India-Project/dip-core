@@ -1,0 +1,5 @@
+{
+  "name": "DIP Core — Domain Contracts & Workbench",
+  "description": "Shared framework-independent domain contracts, schemas, deterministic business rules, and interactive contract workbench for the Digital India Project ecosystem.",
+  "requestFramePermissions": []
+}
