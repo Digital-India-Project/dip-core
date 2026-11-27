@@ -1,0 +1,259 @@
+{
+  "schemaVersion": "1.0.0",
+  "repositoryName": "dip-core",
+  "repositoryVersion": "0.2.0",
+  "packageName": "@dip/core",
+  "packagePrivate": true,
+  "role": "Shared framework-independent domain contracts, schemas, and deterministic business rules",
+  "runtimeRequirements": {
+    "node": ">=22.0.0",
+    "moduleSystem": "ESM",
+    "typescript": "^5.7.3",
+    "coreRuntimeDependencies": []
+  },
+  "frameworkRequirements": {
+    "coreLibrary": "framework-agnostic (zero React, Express, Hono, Firebase, Cloudflare, or payment SDK imports)",
+    "workbenchApp": "React ^18.3.1 + Vite ^6.2.0 + Tailwind CSS ^4.0.9 (development/inspection UI only)"
+  },
+  "entrypoints": {
+    "main": "./dist-lib/index.js",
+    "types": "./dist-lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist-lib/index.d.ts",
+        "import": "./dist-lib/index.js"
+      }
+    }
+  },
+  "publicExports": [
+    "APPLICATION_ALLOWED_TRANSITIONS",
+    "BUSINESS_TIMEZONE",
+    "CORE_CONTRACT_VERSION",
+    "DOCUMENT_ALLOWED_TRANSITIONS",
+    "ErrorCode",
+    "PAYMENT_ALLOWED_TRANSITIONS",
+    "RoundingMode",
+    "SYNTHETIC_APPLICATIONS",
+    "SYNTHETIC_BUSINESS_REF",
+    "SYNTHETIC_CUSTOMER_REF",
+    "SYNTHETIC_DOCUMENTS",
+    "SYNTHETIC_DOCUMENT_REQUIREMENTS",
+    "SYNTHETIC_FORM_SCHEMA",
+    "SYNTHETIC_PARTNERS",
+    "SYNTHETIC_PAYMENT_ORDERS",
+    "SYNTHETIC_SERVICES",
+    "SYNTHETIC_TENANT_CONTEXT",
+    "TERMINAL_APPLICATION_STATES",
+    "adaptLegacyApplicationToCore",
+    "adaptLegacyPaymentOrderToCore",
+    "addMoney",
+    "asApplicationId",
+    "asAuditEventId",
+    "asBusinessId",
+    "asCorrelationId",
+    "asCustomerId",
+    "asDocumentId",
+    "asEventId",
+    "asFormSchemaId",
+    "asIdempotencyKey",
+    "asNotificationId",
+    "asOrderId",
+    "asPartnerId",
+    "asPaymentId",
+    "asProductId",
+    "asProviderReferenceId",
+    "asRefundId",
+    "asServiceId",
+    "asSubmissionId",
+    "asTenantId",
+    "asUserId",
+    "asVerificationId",
+    "calculateServiceQuote",
+    "checkFormSchemaCompatibility",
+    "classifyErrorCode",
+    "combineResults",
+    "compareUtcInstants",
+    "convertRupeesToPaise",
+    "createAuditEvent",
+    "createDomainError",
+    "createEventEnvelope",
+    "createMoney",
+    "createNotificationRequest",
+    "createPageRequest",
+    "equalsMoney",
+    "err",
+    "evaluateDocumentChecklist",
+    "flatMapResult",
+    "formatInrFromPaise",
+    "formatSchemaVersion",
+    "isCompatibleSchemaVersion",
+    "isDocumentExpired",
+    "isFieldVisible",
+    "isInstantExpired",
+    "isTerminalApplicationState",
+    "mapCoreApplicationStatusToLegacy",
+    "mapError",
+    "mapLegacyApplicationStatus",
+    "mapLegacyPaymentStatus",
+    "mapResult",
+    "multiplyBasisPoints",
+    "none",
+    "ok",
+    "paginateArray",
+    "parseBusinessDate",
+    "parseSchemaVersion",
+    "parseUtcInstant",
+    "reconcilePaymentOrder",
+    "sanitizeMetadata",
+    "serializeDomainError",
+    "some",
+    "subtractMoney",
+    "sumMoney",
+    "transitionApplicationState",
+    "transitionDocumentState",
+    "transitionPaymentState",
+    "unwrapOr",
+    "validateBusinessReference",
+    "validateDocumentMetadata",
+    "validateFormSchemaDefinition",
+    "validateFormSubmission",
+    "validatePartnerContract",
+    "validatePaymentOrder",
+    "validateServiceDefinition",
+    "validateTenantContext"
+  ],
+  "apiContractsConsumed": {
+    "httpApisConsumed": [],
+    "externalSdksConsumed": [],
+    "notes": "dip-core is pure and consumes no external HTTP APIs, provider SDKs, or databases."
+  },
+  "apiContractsProvided": {
+    "httpEndpointsProvided": [],
+    "domainContractModules": [
+      "errors/domainError (ErrorCode, DomainError, sanitizeMetadata, serializeDomainError)",
+      "common/result (Result, Option, combinators)",
+      "common/identifiers (21 branded EntityPrefix IDs, SchemaVersion, semver compatibility)",
+      "common/money (Money in INR paise, BigInt basis-point rounding)",
+      "common/time (UtcInstant, BusinessDate, Asia/Kolkata, expiration helpers)",
+      "common/pagination (PageRequest, SortSpec, FilterSpec, MetadataContract)",
+      "identity/identityAndTenant (TenantContext, ActorReference, CustomerReference, BusinessReference)",
+      "events/eventEnvelope (DomainEventEnvelope, AuditEventContract, NotificationRequestContract)",
+      "services/catalogueAndPricing (ServiceDefinition, ProductDefinition, calculateServiceQuote)",
+      "forms/formSchema (FormSchemaContract, FormSectionSchema, validateFormSchemaDefinition, validateFormSubmission)",
+      "documents/documentRequirements (DocumentRequirement, DocumentRecord, evaluateDocumentChecklist)",
+      "applications/applicationLifecycle (ApplicationContract, transitionApplicationState with expectedVersion)",
+      "payments/paymentLifecycle (PaymentOrderContract, RefundRequestContract, reconcilePaymentOrder)",
+      "partners/partnerContract (PartnerContract, OperatorAssignmentContract)",
+      "compatibility/dipindiaAdapters (provisional boundary adapters pending DIPINDIA audit)"
+    ],
+    "sharedContractVectors": "./tests/fixtures/contract-vectors.json"
+  },
+  "authenticationDependencies": {
+    "ownsAuthentication": false,
+    "ownsAuthorizationEnforcement": false,
+    "authorityRepository": "dip-security / DIPINDIA",
+    "contractsProvided": [
+      "ActorRole",
+      "ActorReference",
+      "TenantContext",
+      "ErrorCode.PERMISSION_DENIED"
+    ],
+    "notes": "Core defines actor and tenant reference shapes only; runtime authn/authz enforcement belongs in dip-security, dip-api, and DIPINDIA."
+  },
+  "databaseDependencies": {
+    "ownsDatabase": false,
+    "ormOrDriversUsed": [],
+    "authorityRepository": "DIPINDIA / dip-infrastructure",
+    "notes": "Zero database, Firestore, D1, R2, or PostgreSQL imports in src/core/."
+  },
+  "infrastructureDependencies": {
+    "cloudProviders": [],
+    "deploymentTarget": "npm workspace / package artifact only (not an independently deployed service)",
+    "authorityRepository": "dip-infrastructure"
+  },
+  "environmentVariables": [
+    "VITE_APP_ENV"
+  ],
+  "relatedRepositories": {
+    "DIPINDIA": {
+      "expectedVersionRange": "unverified (source unavailable in workspace)",
+      "relationship": "primary-consumer-and-functional-authority",
+      "compatibilityStatus": "provisional-adapters-ready-pending-audit"
+    },
+    "dip-api": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "consumer-for-domain-dtos-validation-and-errors",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    },
+    "dip-ui": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "consumer-for-enums-form-schemas-and-error-codes",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    },
+    "dip-sdk": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "consumer-for-stable-domain-types",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    },
+    "dip-security": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "shared-actor-tenant-and-error-references",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    },
+    "dip-automation": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "consumer-for-event-envelopes-and-lifecycle-states",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    },
+    "dip-infrastructure": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "no-runtime-dependency-ci-governance-only",
+      "compatibilityStatus": "boundary-compliant"
+    },
+    "dip-docs": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "documentation-reference-consumer",
+      "compatibilityStatus": "docs-synchronized"
+    },
+    "dip-status": {
+      "expectedVersionRange": ">=0.1.0 <1.0.0",
+      "relationship": "optional-service-availability-enum-consumer",
+      "compatibilityStatus": "awaiting-cross-repo-verification"
+    }
+  },
+  "capabilities": {
+    "implemented": [
+      "Branded domain identifiers and semver helpers",
+      "Integer paise Money arithmetic and BigInt basis-point rounding",
+      "Strict UTC instant and business date parsing with calendar validation",
+      "Result/Option primitives and sanitized DomainError serialization",
+      "Service/product definitions and deterministic GST/concession pricing",
+      "Application lifecycle state machine with preconditions and optimistic concurrency",
+      "Payment order, cumulative refund, and reconciliation contracts",
+      "Document metadata validation, expiration checks, and checklist evaluation",
+      "Versioned form schema validation with conditional visibility and prototype/ReDoS guards",
+      "Identity/tenant/business/partner reference contracts",
+      "Versioned domain event envelopes, audit events, and notification request contracts",
+      "Automated dependency boundary check and Node.js unit/contract tests"
+    ],
+    "mockedOrProvisional": [
+      "Synthetic domain fixtures (src/core/fixtures/syntheticFixtures.ts)",
+      "Provisional DIPINDIA compatibility adapters (src/core/compatibility/dipindiaAdapters.ts)"
+    ],
+    "blocked": [
+      "Read-only source audit of DIPINDIA repository (unavailable in this workspace)",
+      "Cross-repository integration verification with dip-api, dip-ui, dip-sdk, dip-security, dip-automation",
+      "Git branch/commit/PR creation (workspace snapshot lacks .git and remote credentials)"
+    ],
+    "untested": [
+      "Live DIPINDIA golden characterization parity",
+      "Real Cashfree / API Sathi / Firebase / Cloudflare adapter execution (out of scope for dip-core)"
+    ]
+  },
+  "compatibilityStatus": "core-library-ready-for-adapter-testing; dipindia-parity-pending",
+  "knownBlockers": [
+    "No access to DIPINDIA or sibling repository sources in this environment to verify legacy schemas and pricing parity.",
+    "No package-lock.json present for npm audit.",
+    "No .git directory or GitHub remote configured for branch/PR delivery."
+  ]
+}

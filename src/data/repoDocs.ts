@@ -4,10 +4,14 @@ import architectureRaw from '../../docs/ARCHITECTURE.md?raw';
 import domainModelRaw from '../../docs/DOMAIN_MODEL.md?raw';
 import contractsRaw from '../../docs/CONTRACTS.md?raw';
 import compatibilityRaw from '../../docs/COMPATIBILITY.md?raw';
-import roadmapRaw from '../../docs/ROADMAP.md?raw';
+import compatibilityMatrixRaw from '../../docs/COMPATIBILITY_MATRIX.md?raw';
 import integrationRaw from '../../docs/INTEGRATION.md?raw';
+import integrationContractsRaw from '../../docs/INTEGRATION_CONTRACTS.md?raw';
+import implementationStatusRaw from '../../docs/IMPLEMENTATION_STATUS.md?raw';
+import roadmapRaw from '../../docs/ROADMAP.md?raw';
 import securityRaw from '../../docs/SECURITY.md?raw';
 import testingRaw from '../../docs/TESTING.md?raw';
+import testReportRaw from '../../docs/TEST_REPORT.md?raw';
 import versioningRaw from '../../docs/VERSIONING.md?raw';
 
 export interface RepoDocEntry {
@@ -25,6 +29,34 @@ export const REPO_DOCS: readonly RepoDocEntry[] = [
     title: 'Mission & Design Rules',
     summary: 'Repository baseline, DIPINDIA-first rule, package layout, and 8 core design rules.',
     content: readmeRaw,
+  },
+  {
+    id: 'implementation-status',
+    filename: 'docs/IMPLEMENTATION_STATUS.md',
+    title: 'Implementation Status',
+    summary: 'Verified inventory of implemented, provisional/mocked, blocked, and untested capabilities.',
+    content: implementationStatusRaw,
+  },
+  {
+    id: 'integration-contracts',
+    filename: 'docs/INTEGRATION_CONTRACTS.md',
+    title: 'Shared Integration Contracts',
+    summary: 'Cross-repository decisions, coordination items, assumptions, risks, and breaking changes.',
+    content: integrationContractsRaw,
+  },
+  {
+    id: 'compatibility-matrix',
+    filename: 'docs/COMPATIBILITY_MATRIX.md',
+    title: 'Ecosystem Compatibility Matrix',
+    summary: '10-repository compatibility versions, contract directions, and shared test vectors.',
+    content: compatibilityMatrixRaw,
+  },
+  {
+    id: 'test-report',
+    filename: 'docs/TEST_REPORT.md',
+    title: 'Verification & Test Report',
+    summary: 'Separated results across unit, contract, provisional adapter, boundary, and build checks.',
+    content: testReportRaw,
   },
   {
     id: 'architecture',

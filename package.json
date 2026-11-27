@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "sideEffects": false,
   "main": "./dist-lib/index.js",
   "types": "./dist-lib/index.d.ts",

@@ -124,7 +124,16 @@ export function mapCoreApplicationStatusToLegacy(state: ApplicationState): strin
 export function adaptLegacyApplicationToCore(
   legacy: LegacyDipindiaApplicationShape
 ): Result<ApplicationContract, DomainError> {
-  const appIdRes = asApplicationId(normalizeBrandedOrPrefix(legacy.id, 'app'), 'id');
+  if (!legacy || typeof legacy !== 'object') {
+    return err(
+      createDomainError(
+        ErrorCode.SCHEMA_VALIDATION_FAILED,
+        'Legacy application payload must be a non-null object.',
+        '$'
+      )
+    );
+  }
+  const appIdRes = asApplicationId(normalizeBrandedOrPrefix(String(legacy.id ?? ''), 'app'), 'id');
   if (!appIdRes.ok) return appIdRes;
 
   const userIdRes = asUserId(normalizeBrandedOrPrefix(legacy.userId, 'usr'), 'userId');
@@ -193,7 +202,16 @@ export function mapLegacyPaymentStatus(cfStatus: string): Result<PaymentState, D
 export function adaptLegacyPaymentOrderToCore(
   legacy: LegacyCashfreeOrderShape
 ): Result<PaymentOrderContract, DomainError> {
-  const ordRes = asOrderId(normalizeBrandedOrPrefix(legacy.orderId, 'ord'), 'orderId');
+  if (!legacy || typeof legacy !== 'object') {
+    return err(
+      createDomainError(
+        ErrorCode.SCHEMA_VALIDATION_FAILED,
+        'Legacy payment payload must be a non-null object.',
+        '$'
+      )
+    );
+  }
+  const ordRes = asOrderId(normalizeBrandedOrPrefix(String(legacy.orderId ?? ''), 'ord'), 'orderId');
   if (!ordRes.ok) return ordRes;
 
   const payRes = asPaymentId(normalizeBrandedOrPrefix(legacy.paymentId, 'pay'), 'paymentId');

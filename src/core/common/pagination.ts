@@ -91,6 +91,58 @@ export function createPageRequest(
       )
     );
   }
+  if (raw.sort !== undefined) {
+    for (let i = 0; i < raw.sort.length; i += 1) {
+      const s = raw.sort[i];
+      if (
+        !s ||
+        UNSAFE_KEYS.has(s.field) ||
+        !SAFE_FIELD_NAME_PATTERN.test(s.field) ||
+        (allowedSortFields && !allowedSortFields.includes(s.field))
+      ) {
+        return err(
+          createDomainError(
+            ErrorCode.INVALID_FILTER_OR_SORT,
+            `Sort field "${s?.field ?? ''}" is invalid or not permitted.`,
+            `sort[${i}].field`
+          )
+        );
+      }
+      if (s.direction !== 'asc' && s.direction !== 'desc') {
+        return err(
+          createDomainError(
+            ErrorCode.INVALID_FILTER_OR_SORT,
+            'Sort direction must be "asc" or "desc".',
+            `sort[${i}].direction`
+          )
+        );
+      }
+    }
+  }
+  if (raw.filters !== undefined) {
+    const validOps = new Set<FilterOperator>(['eq', 'neq', 'in', 'gte', 'lte', 'contains']);
+    for (let i = 0; i < raw.filters.criteria.length; i += 1) {
+      const c = raw.filters.criteria[i];
+      if (!c || UNSAFE_KEYS.has(c.field) || !SAFE_FIELD_NAME_PATTERN.test(c.field)) {
+        return err(
+          createDomainError(
+            ErrorCode.INVALID_FILTER_OR_SORT,
+            `Filter field "${c?.field ?? ''}" is invalid.`,
+            `filters.criteria[${i}].field`
+          )
+        );
+      }
+      if (!validOps.has(c.operator)) {
+        return err(
+          createDomainError(
+            ErrorCode.INVALID_FILTER_OR_SORT,
+            `Filter operator "${String(c.operator)}" is invalid.`,
+            `filters.criteria[${i}].operator`
+          )
+        );
+      }
+    }
+  }
 
   return ok({
     page,

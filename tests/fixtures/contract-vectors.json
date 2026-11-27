@@ -1,0 +1,49 @@
+{
+  "vectorSuiteVersion": "0.2.0",
+  "syntheticOnly": true,
+  "pricingQuoteVectors": [
+    {
+      "name": "PAN correction qty 1, NONE, HALF_UP",
+      "serviceId": "svc_pan_correction_01",
+      "quantity": 1,
+      "concession": "NONE",
+      "roundingMode": "HALF_UP",
+      "expected": {
+        "statutorySubtotalPaise": 10700,
+        "facilitationTaxablePaise": 15000,
+        "gstAmountPaise": 2700,
+        "totalPayablePaise": 28400
+      }
+    },
+    {
+      "name": "PAN correction qty 2, SENIOR_CITIZEN_10, HALF_UP",
+      "serviceId": "svc_pan_correction_01",
+      "quantity": 2,
+      "concession": "SENIOR_CITIZEN_10",
+      "roundingMode": "HALF_UP",
+      "expected": {
+        "statutorySubtotalPaise": 21400,
+        "facilitationTaxablePaise": 27000,
+        "gstAmountPaise": 4860,
+        "totalPayablePaise": 53260
+      }
+    }
+  ],
+  "rupeeToPaiseVectors": [
+    { "rupees": 19.99, "expectedPaise": 1999 },
+    { "rupees": 0.01, "expectedPaise": 1 },
+    { "rupees": 284, "expectedPaise": 28400 }
+  ],
+  "applicationStatusMappingVectors": [
+    { "legacy": "draft", "core": "DRAFT" },
+    { "legacy": "under_review", "core": "IN_REVIEW" },
+    { "legacy": "action_required", "core": "RESUBMISSION_REQUIRED" },
+    { "legacy": "completed", "core": "COMPLETED" }
+  ],
+  "cashfreeStatusMappingVectors": [
+    { "provider": "ACTIVE", "core": "CREATED" },
+    { "provider": "PAID", "core": "CAPTURED" },
+    { "provider": "SUCCESS", "core": "CAPTURED" },
+    { "provider": "USER_DROPPED", "core": "FAILED" }
+  ]
+}

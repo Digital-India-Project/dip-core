@@ -146,6 +146,72 @@ export function checkFormSchemaCompatibility(
   return { compatible: true };
 }
 
+export function validateFormSchemaDefinition(
+  schema: FormSchemaContract
+): Result<FormSchemaContract, readonly DomainError[]> {
+  const errors: DomainError[] = [];
+  if (!schema.schemaId || schema.schemaId.trim().length < 3) {
+    errors.push(
+      createDomainError(
+        ErrorCode.SCHEMA_VALIDATION_FAILED,
+        'schemaId must be at least 3 characters.',
+        'schemaId'
+      )
+    );
+  }
+  const versionRes = parseSchemaVersion(schema.version, 'version');
+  if (!versionRes.ok) {
+    errors.push(versionRes.error);
+  }
+
+  const seenKeys = new Set<string>();
+  for (const field of schema.fields) {
+    if (UNSAFE_KEYS.has(field.key)) {
+      errors.push(
+        createDomainError(
+          ErrorCode.PROTOTYPE_KEY_REJECTED,
+          `Disallowed field key "${field.key}".`,
+          field.key
+        )
+      );
+      continue;
+    }
+    if (seenKeys.has(field.key)) {
+      errors.push(
+        createDomainError(
+          ErrorCode.CONFLICT,
+          `Duplicate form field key "${field.key}".`,
+          field.key
+        )
+      );
+    }
+    seenKeys.add(field.key);
+
+    const patternRes = resolvePattern(field);
+    if (!patternRes.ok) {
+      errors.push(patternRes.error);
+    }
+  }
+
+  if (schema.sections) {
+    for (const section of schema.sections) {
+      for (const fk of section.fieldKeys) {
+        if (!seenKeys.has(fk)) {
+          errors.push(
+            createDomainError(
+              ErrorCode.SCHEMA_VALIDATION_FAILED,
+              `Section "${section.sectionId}" references unknown field key "${fk}".`,
+              `sections.${section.sectionId}`
+            )
+          );
+        }
+      }
+    }
+  }
+
+  return errors.length > 0 ? err(errors) : ok(schema);
+}
+
 export function validateFormSubmission(
   schema: FormSchemaContract,
   rawPayload: unknown
